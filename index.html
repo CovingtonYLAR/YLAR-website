@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YLAR — Young Leaders Application Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #0f1f38;
+    --cream: #f5f0e8;
+    --gold: #e8a020;
+    --gold-light: #f0bc5a;
+    --rust: #cc1f2d;
+    --sage: #1a3a5c;
+    --white: #ffffff;
+    --green: #2a6b3c;
+    --green-light: #d4eddb;
+    --font-display: 'Bebas Neue', sans-serif;
+    --font-serif: 'DM Serif Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--ink); color: var(--cream); overflow-x: hidden; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 3rem;
+    background: rgba(15,31,56,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(212,168,67,0.15);
+  }
+  .nav-logo { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.08em; color: var(--gold); text-decoration: none; display: flex; align-items: center; gap: 0.75rem; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cream); text-decoration: none; opacity: 0.7; transition: opacity 0.2s; }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta { background: var(--gold); color: var(--ink) !important; opacity: 1 !important; padding: 0.5rem 1.25rem; font-weight: 500 !important; transition: background 0.2s !important; }
+  .nav-cta:hover { background: var(--gold-light) !important; }
+
+  #hero {
+    min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 0 3rem 5rem; position: relative; overflow: hidden; background: var(--ink);
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 70% 40%, rgba(232,160,32,0.12) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 20% 80%, rgba(204,31,45,0.08) 0%, transparent 60%);
+  }
+  .hero-lines { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .hero-lines::before { content: ''; position: absolute; top: 12%; left: -5%; width: 60%; height: 1px; background: linear-gradient(90deg, transparent, rgba(212,168,67,0.3), transparent); transform: rotate(-15deg); }
+  .hero-lines::after { content: ''; position: absolute; bottom: 30%; right: -5%; width: 45%; height: 1px; background: linear-gradient(90deg, transparent, rgba(204,31,45,0.25), transparent); transform: rotate(25deg); }
+  .hero-eyebrow { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.8s 0.2s forwards; }
+  .hero-headline { font-family: var(--font-display); font-size: clamp(5rem, 14vw, 14rem); line-height: 0.9; letter-spacing: 0.02em; color: var(--cream); opacity: 0; animation: fadeUp 0.8s 0.4s forwards; position: relative; z-index: 1; }
+  .hero-headline .accent { color: var(--gold); display: block; }
+  .hero-headline .outline { -webkit-text-stroke: 2px var(--cream); color: transparent; }
+  .hero-sub { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 3rem; opacity: 0; animation: fadeUp 0.8s 0.7s forwards; }
+  .hero-desc { max-width: 460px; font-size: 1.1rem; line-height: 1.7; color: rgba(245,240,232,0.88); font-weight: 300; }
+  .hero-desc strong { color: var(--cream); font-weight: 500; }
+  .hero-stats { display: flex; gap: 3rem; text-align: right; align-items: flex-end; }
+  .hero-stat-num { font-family: var(--font-display); font-size: 3rem; color: var(--gold); line-height: 1; display: block; }
+  .hero-stat-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,240,232,0.5); margin-top: 0.25rem; display: block; }
+  .hero-scroll { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.5rem; opacity: 0; animation: fadeUp 1s 1.2s forwards; }
+  .hero-scroll span { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,240,232,0.35); }
+  .scroll-line { width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(212,168,67,0.5), transparent); animation: scrollPulse 2s infinite; }
+
+  .marquee-wrap { background: var(--gold); padding: 0.9rem 0; overflow: hidden; white-space: nowrap; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+  .marquee-track { display: inline-block; animation: marquee 35s linear infinite; }
+  .marquee-track span { font-family: var(--font-display); font-size: 1.1rem; letter-spacing: 0.15em; color: var(--ink); margin: 0 2rem; }
+  .marquee-track .dot { color: #cc1f2d; }
+
+  #about { background: var(--cream); color: var(--ink); padding: 8rem 3rem; position: relative; overflow: hidden; }
+  #about::before { content: 'ACCESS'; font-family: var(--font-display); font-size: 18vw; position: absolute; bottom: -2vw; right: -1vw; color: rgba(10,10,10,0.04); pointer-events: none; line-height: 1; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; max-width: 1200px; margin: 0 auto; }
+  .about-label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--rust); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
+  .about-label::before { content: ''; display: block; width: 30px; height: 2px; background: var(--rust); }
+  .about-label[style*="2a6b3c"]::before { background: #2a6b3c; }
+  .about-headline { font-family: var(--font-serif); font-size: clamp(2.5rem, 4vw, 4rem); line-height: 1.15; color: var(--ink); margin-bottom: 2rem; }
+  .about-headline em { color: var(--rust); font-style: italic; }
+  .about-body { font-size: 1.05rem; line-height: 1.8; color: rgba(10,10,10,0.7); font-weight: 300; margin-bottom: 1.5rem; }
+  .pillars { display: flex; flex-direction: column; gap: 1.5rem; }
+  .pillar { display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.5rem; border: 1px solid rgba(10,10,10,0.08); border-left: 4px solid var(--green); background: white; }
+  .pillar-num { font-family: var(--font-display); font-size: 3rem; line-height: 1; color: var(--gold); min-width: 50px; }
+  .pillar-title { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.05em; color: var(--ink); margin-bottom: 0.3rem; }
+  .pillar-desc { font-size: 0.9rem; line-height: 1.6; color: rgba(10,10,10,0.6); }
+
+  #how { background: var(--ink); padding: 8rem 3rem; }
+  .section-label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+  .section-label::before { content: ''; display: block; width: 30px; height: 2px; background: var(--gold); }
+  .section-headline { font-family: var(--font-display); font-size: clamp(3rem, 6vw, 6rem); line-height: 0.95; letter-spacing: 0.03em; margin-bottom: 4rem; max-width: 800px; }
+  .how-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid rgba(245,240,232,0.18); }
+  .how-item { padding: 2.5rem 2rem; border-right: 1px solid rgba(245,240,232,0.18); transition: background 0.3s; }
+  .how-item:last-child { border-right: none; }
+  .how-item:hover { background: rgba(232,160,32,0.09); }
+  .how-num { font-family: var(--font-display); font-size: 4rem; line-height: 1; color: rgba(212,168,67,0.2); margin-bottom: 1.5rem; }
+  .how-title { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.05em; color: var(--cream); margin-bottom: 1rem; }
+  .how-desc { font-size: 0.875rem; line-height: 1.7; color: rgba(245,240,232,0.72); }
+  .how-tag { display: inline-block; margin-top: 1.5rem; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); border: 1px solid rgba(212,168,67,0.3); padding: 0.3rem 0.65rem; }
+
+  #results { background: var(--sage); padding: 8rem 3rem; position: relative; overflow: hidden; }
+  #results::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #2a6b3c, transparent); pointer-events: none; }
+  #results::before { content: 'RESULTS'; font-family: var(--font-display); font-size: 18vw; position: absolute; top: -2vw; left: -1vw; color: rgba(245,240,232,0.04); pointer-events: none; line-height: 1; }
+  .results-top { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; max-width: 1200px; margin: 0 auto; }
+  .big-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
+  .big-stat { border-top: 2px solid rgba(212,168,67,0.4); padding-top: 1.5rem; }
+  .big-stat-num { font-family: var(--font-display); font-size: 4.5rem; line-height: 1; color: var(--gold); display: block; }
+  .big-stat-label { font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,240,232,0.72); margin-top: 0.5rem; display: block; }
+  .results-schools-label { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 1.5rem; }
+  .schools-list { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .school-tag { font-size: 0.8rem; padding: 0.4rem 0.9rem; background: rgba(245,240,232,0.06); border: 1px solid rgba(245,240,232,0.15); color: rgba(245,240,232,0.8); letter-spacing: 0.03em; transition: background 0.2s; }
+  .school-tag:hover { background: rgba(212,168,67,0.15); border-color: rgba(212,168,67,0.4); color: var(--cream); }
+  .school-tag.elite { background: rgba(212,168,67,0.1); border-color: rgba(212,168,67,0.3); color: var(--gold-light); }
+
+  #diff { background: var(--cream); color: var(--ink); padding: 8rem 3rem; }
+  .diff-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; max-width: 1200px; margin: 0 auto; }
+  .diff-item { border-top: 3px solid var(--ink); padding-top: 2rem; }
+  .diff-item:nth-child(2) { border-top-color: var(--rust); }
+  .diff-item:nth-child(3) { border-top-color: #2a6b3c; }
+  .diff-title { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 1rem; color: var(--ink); }
+  .diff-desc { font-size: 0.95rem; line-height: 1.75; color: rgba(10,10,10,0.65); }
+  .diff-quote { font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; color: var(--ink); margin-top: 1.5rem; padding-left: 1rem; border-left: 3px solid #2a6b3c; line-height: 1.5; }
+
+  #apply { background: var(--ink); padding: 8rem 3rem; text-align: center; position: relative; overflow: hidden; }
+  #apply::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(232,160,32,0.1) 0%, transparent 70%); pointer-events: none; }
+  .apply-eyebrow { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 2rem; display: block; }
+  .apply-headline { font-family: var(--font-display); font-size: clamp(4rem, 10vw, 10rem); line-height: 0.9; letter-spacing: 0.02em; color: var(--cream); margin-bottom: 2rem; }
+  .apply-headline .gold { color: var(--gold); }
+  .apply-sub { font-size: 1.1rem; line-height: 1.7; color: rgba(245,240,232,0.78); max-width: 520px; margin: 0 auto 3.5rem; font-weight: 300; }
+  .apply-buttons { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 1.1rem 2.5rem; background: var(--gold); color: var(--ink); border: 2px solid var(--gold); transition: background 0.2s, border-color 0.2s; display: inline-block; cursor: pointer; }
+  .btn-primary:hover { background: var(--gold-light); border-color: var(--gold-light); }
+  .btn-secondary { font-family: var(--font-body); font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 1.1rem 2.5rem; background: transparent; color: var(--cream); border: 2px solid rgba(245,240,232,0.3); transition: border-color 0.2s; display: inline-block; cursor: pointer; }
+  .btn-secondary:hover { border-color: var(--cream); }
+
+  footer { background: #091629; padding: 3rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid rgba(245,240,232,0.06); flex-wrap: wrap; gap: 1rem; }
+  .footer-logo { font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.1em; color: var(--gold); }
+  .footer-copy { font-size: 0.75rem; letter-spacing: 0.05em; color: rgba(245,240,232,0.3); }
+  .footer-tagline { font-family: var(--font-serif); font-style: italic; font-size: 0.9rem; color: rgba(245,240,232,0.4); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-logo">YLAR</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#apply" class="nav-cta">Apply Now</a></li>
+  </ul>
+</nav>
+
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-eyebrow">Young Leaders Application Review — Free. Student-Run. FGLI-Led.</div>
+  <h1 class="hero-headline">
+    <span class="outline">YOUR</span>
+    <span class="accent">STORY</span>
+    BELONGS
+  </h1>
+  <div class="hero-sub">
+    <p class="hero-desc">YLAR is a <strong>free, student-run college application program</strong> built by and for first-generation, low-income students. We don't just edit essays — we help you build your narrative, find your spike, and apply with confidence.</p>
+    <div class="hero-stats">
+      <div style="min-width:110px;"><span class="hero-stat-num" style="font-size:2.1rem; display:block; text-align:right; white-space:nowrap;">Two Dozen+</span><span class="hero-stat-label" style="text-align:right;">Students Supported</span></div>
+      <div><span class="hero-stat-num">18</span><span class="hero-stat-label">States Reached</span></div>
+      <div><span class="hero-stat-num">10+</span><span class="hero-stat-label">QuestBridge Finalists</span></div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Harvard</span><span class="dot">✦</span><span>Princeton</span><span class="dot">✦</span><span>Stanford</span><span class="dot">✦</span><span>Columbia</span><span class="dot">✦</span><span>MIT</span><span class="dot">✦</span><span>Penn</span><span class="dot">✦</span><span>Yale</span><span class="dot">✦</span><span>Duke</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<section id="about">
+  <div class="about-grid">
+    <div class="reveal">
+      <div class="about-label" style="color: #2a6b3c;">What is YLAR</div>
+      <h2 class="about-headline">Built by the ones who <em>lived it</em></h2>
+      <p class="about-body">Most college counseling programs help students polish their essays. YLAR helps them find their story. We're a free, student-run program built specifically for first-generation and low-income (FGLI) students.</p>
+      <p class="about-body">We know what it's like to not understand FAFSA, to feel behind peers who had private consultants, to write essays without anyone in your corner. That lived experience is exactly why we do this.</p>
+    </div>
+    <div class="pillars reveal reveal-delay-2">
+      <div class="pillar">
+        <div class="pillar-num">01</div>
+        <div><div class="pillar-title">Access</div><div class="pillar-desc">Making information that's usually gatekept available to everyone — no cost, no barrier, no catch.</div></div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">02</div>
+        <div><div class="pillar-title">Community</div><div class="pillar-desc">Creating a space where FGLI students don't feel alone in a process that often makes them feel invisible.</div></div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-num">03</div>
+        <div><div class="pillar-title">Empowerment</div><div class="pillar-desc">Helping students tell their stories with confidence — because clarity and authenticity win, not prestige.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="section-label reveal">How It Works</div>
+  <h2 class="section-headline reveal reveal-delay-1">SUPPORT ACROSS<br>THE ENTIRE JOURNEY</h2>
+  <div class="how-grid">
+    <div class="how-item reveal reveal-delay-1">
+      <div class="how-num">01</div>
+      <div class="how-title">Essay Feedback</div>
+      <div class="how-desc">Personal statements, supplements, and short answers. We don't just fix grammar — we help you find your throughline, your spike, and your voice.</div>
+      <div class="how-tag">Core Service</div>
+    </div>
+    <div class="how-item reveal reveal-delay-2">
+      <div class="how-num">02</div>
+      <div class="how-title">Financial Aid Guidance</div>
+      <div class="how-desc">FAFSA, CSS Profile, scholarships, and comparing aid packages. We break down the confusing stuff in plain language.</div>
+      <div class="how-tag">Core Service</div>
+    </div>
+    <div class="how-item reveal reveal-delay-3">
+      <div class="how-num">03</div>
+      <div class="how-title">Narrative Strategy</div>
+      <div class="how-desc">We help you identify the theme that ties your experiences together and present it in a way that's cohesive, authentic, and impossible to ignore.</div>
+      <div class="how-tag" style="color:#5db87a; border-color:rgba(93,184,122,0.4);">Our Edge</div>
+    </div>
+    <div class="how-item reveal reveal-delay-4">
+      <div class="how-num">04</div>
+      <div class="how-title">Peer Support</div>
+      <div class="how-desc">Weekly check-ins during peak season. Group spaces for questions without judgment. Mentors who understand the fear and show up anyway.</div>
+      <div class="how-tag" style="color:#5db87a; border-color:rgba(93,184,122,0.4);">Community</div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="results-top">
+    <div>
+      <div class="section-label reveal" style="color: var(--gold-light);">Track Record</div>
+      <h2 class="section-headline reveal reveal-delay-1" style="color: var(--cream);">LAST CYCLE.<br>REAL RESULTS.</h2>
+      <div class="big-stats">
+        <div class="big-stat reveal reveal-delay-1"><span class="big-stat-num" style="font-size:3rem;">Two Dozen+</span><span class="big-stat-label">Students supported</span></div>
+        <div class="big-stat reveal reveal-delay-2"><span class="big-stat-num">18</span><span class="big-stat-label">States reached</span></div>
+        <div class="big-stat reveal reveal-delay-3"><span class="big-stat-num">10+</span><span class="big-stat-label">QuestBridge Finalists</span></div>
+        <div class="big-stat reveal reveal-delay-4"><span class="big-stat-num">$0</span><span class="big-stat-label">Cost to every student</span></div>
+      </div>
+    </div>
+    <div class="reveal reveal-delay-2">
+      <div class="results-schools-label">Our students earned admission to</div>
+      <div class="schools-list">
+        <span class="school-tag elite">Harvard College</span>
+        <span class="school-tag elite">Princeton University</span>
+        <span class="school-tag elite">Stanford University</span>
+        <span class="school-tag elite">Columbia University</span>
+        <span class="school-tag elite">University of Chicago</span>
+        <span class="school-tag elite">Duke University</span>
+        <span class="school-tag elite">Johns Hopkins</span>
+        <span class="school-tag elite">Brown University</span>
+        <span class="school-tag elite">Dartmouth College</span>
+        <span class="school-tag">Rice University</span>
+        <span class="school-tag">Pomona College</span>
+        <span class="school-tag">Notre Dame</span>
+        <span class="school-tag">UCLA</span>
+        <span class="school-tag">UMich</span>
+        <span class="school-tag">UVA</span>
+        <span class="school-tag">Howard University</span>
+        <span class="school-tag">NYU</span>
+        <span class="school-tag">Tulane</span>
+        <span class="school-tag">Ohio State</span>
+        <span class="school-tag">UC Davis</span>
+        <span class="school-tag">University of Florida</span>
+        <span class="school-tag">UIUC</span>
+        <span class="school-tag">Tuskegee University</span>
+        <span class="school-tag">Middlebury College</span>
+        <span class="school-tag">Grinnell College</span>
+        <span class="school-tag">Davidson (James B. Duke Scholar)</span>
+        <span class="school-tag">W&M (Johnson Scholar)</span>
+        <span class="school-tag">UofL (MLK + McConnell Scholar)</span>
+        <span class="school-tag">Centre (Lincoln Scholar)</span>
+        <span class="school-tag">Furman · Denison · Rutgers</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="diff">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div class="about-label reveal" style="color:#2a6b3c;">What Sets Us Apart</div>
+    <div class="diff-grid" style="margin-top: 3rem;">
+      <div class="diff-item reveal reveal-delay-1">
+        <div class="diff-title">FGLI-Led, Always</div>
+        <div class="diff-desc">Every YLAR mentor has personally walked this path. We know what it feels like to doubt whether we "belong" in elite spaces — and we came back to prove we do.</div>
+        <div class="diff-quote">"This lived experience gives us insight no traditional counseling program can replicate."</div>
+      </div>
+      <div class="diff-item reveal reveal-delay-2">
+        <div class="diff-title">Diverse Institutional Knowledge</div>
+        <div class="diff-desc">Our mentors come from Ivy League schools, liberal arts colleges, state flagships, and full-ride programs — giving students a wide range of real perspectives on admissions.</div>
+        <div class="diff-quote">"We bring the full picture: admissions culture, financial aid, campus climate, and what it actually feels like to be there."</div>
+      </div>
+      <div class="diff-item reveal reveal-delay-3">
+        <div class="diff-title">Story Over Polish</div>
+        <div class="diff-desc">Most programs fix grammar. YLAR helps students build a story. We help you understand your spike, how your activities connect, and how to present yourself with clarity and authenticity.</div>
+        <div class="diff-quote">"The strongest applications aren't about prestige. They're about clarity."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- TEAM -->
+<section id="team" style="background: var(--ink); padding: 8rem 3rem;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div class="section-label reveal">The Team</div>
+    <h2 class="section-headline reveal reveal-delay-1">MENTORS WHO<br>LIVED THE JOURNEY</h2>
+    <p class="reveal reveal-delay-2" style="font-size:1.05rem; line-height:1.8; color:rgba(245,240,232,0.7); max-width:600px; margin-bottom:4rem; font-weight:300;">Every YLAR mentor is a current college student who was a first-generation, low-income applicant. They know the process inside and out—and more importantly, they know what it felt like.</p>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1.5rem;">
+
+      <div class="reveal reveal-delay-1" style="background:rgba(245,240,232,0.04); border:1px solid rgba(245,240,232,0.12); padding:2rem 1.5rem;">
+        <div style="width:56px; height:56px; border-radius:50%; background:rgba(232,160,32,0.15); border:2px solid rgba(232,160,32,0.3); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.6rem; color:var(--gold);">👤</div>
+        <div style="font-family:var(--font-display); font-size:1.3rem; letter-spacing:0.05em; color:var(--cream); margin-bottom:0.25rem;">Mentor Name</div>
+        <div style="font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem;">University Name</div>
+        <div style="font-size:0.85rem; line-height:1.65; color:rgba(245,240,232,0.55);">Short bio about background, what they study, and what they bring to YLAR students.</div>
+        <div style="margin-top:1.25rem; display:flex; flex-wrap:wrap; gap:0.4rem;">
+          <span style="font-size:0.7rem; padding:0.25rem 0.65rem; border:1px solid rgba(42,107,60,0.5); color:#5db87a; letter-spacing:0.08em;">Essays</span>
+          <span style="font-size:0.7rem; padding:0.25rem 0.65rem; border:1px solid rgba(232,160,32,0.35); color:var(--gold); letter-spacing:0.08em;">Financial Aid</span>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2" style="background:rgba(245,240,232,0.04); border:1px solid rgba(245,240,232,0.12); padding:2rem 1.5rem;">
+        <div style="width:56px; height:56px; border-radius:50%; background:rgba(42,107,60,0.15); border:2px solid rgba(42,107,60,0.35); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.6rem; color:#5db87a;">👤</div>
+        <div style="font-family:var(--font-display); font-size:1.3rem; letter-spacing:0.05em; color:var(--cream); margin-bottom:0.25rem;">Mentor Name</div>
+        <div style="font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem;">University Name</div>
+        <div style="font-size:0.85rem; line-height:1.65; color:rgba(245,240,232,0.55);">Short bio about background, what they study, and what they bring to YLAR students.</div>
+        <div style="margin-top:1.25rem; display:flex; flex-wrap:wrap; gap:0.4rem;">
+          <span style="font-size:0.7rem; padding:0.25rem 0.65rem; border:1px solid rgba(42,107,60,0.5); color:#5db87a; letter-spacing:0.08em;">Narrative</span>
+          <span style="font-size:0.7rem; padding:0.25rem 0.65rem; border:1px solid rgba(204,31,45,0.4); color:#e06070; letter-spacing:0.08em;">QuestBridge</span>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-3" style="background:rgba(245,240,232,0.04); border:1px solid rgba(245,240,232,0.12); padding:2rem 1.5rem;">
+        <div style="width:56px; height:56px; border-radius:50%; background:rgba(204,31,45,0.1); border:2px solid rgba(204,31,45,0.3); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.6rem; color:#e06070;">👤</div>
+        <div style="font-family:var(--font-display); font-size:1.3rem; letter-spacing:0.05em; color:var(--cream); margin-bottom:0.25rem;">Mentor Name</div>
+        <div style="font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem;">University Name</div>
+        <div style="font-size:0.85rem; line-height:1.65; color:rgba(245,240,232,0.55);">Short bio about background, what they study, and what they bring to YLAR students.</div>
+        <div style="margin-top:1.25rem; display:flex; flex-wrap:wrap; gap:0.4rem;">
+          <span style="font-size:0.7rem; padding:0.25rem 0.65rem; border:1px solid rgba(232,160,32,0.35); color:var(--gold); letter-spacing:0.08em;">Essays</span>
+          <span style="font-size:0.7rem; padding:0.25rem 0.65rem; border:1px solid rgba(42,107,60,0.5); color:#5db87a; letter-spacing:0.08em;">Peer Support</span>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-4" style="background:rgba(245,240,232,0.04); border:1px solid rgba(245,240,232,0.12); padding:2rem 1.5rem;">
+        <div style="width:56px; height:56px; border-radius:50%; background:rgba(26,58,92,0.4); border:2px solid rgba(100,150,210,0.35); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:1.6rem; color:#7aaee0;">👤</div>
+        <div style="font-family:var(--font-display); font-size:1.3rem; letter-spacing:0.05em; color:var(--cream); margin-bottom:0.25rem;">Mentor Name</div>
+        <div style="font-size:0.75rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem;">University Name</div>
+        <div style="font-size:0.85rem; line-height:1.65; color:rgba(245,240,232,0.55);">Short bio about background, what they study, and what they bring to YLAR students.</div>
+        <div style="margin-top:1.25rem; display:flex; flex-wrap:wrap; gap:0.4rem;">
+          <span style="font-size:0.7rem; padding:0.25rem 0.65rem; border:1px solid rgba(100,150,210,0.4); color:#7aaee0; letter-spacing:0.08em;">Financial Aid</span>
+          <span style="font-size:0.7rem; padding:0.25rem 0.65rem; border:1px solid rgba(42,107,60,0.5); color:#5db87a; letter-spacing:0.08em;">Narrative</span>
+        </div>
+      </div>
+
+    </div>
+    <p class="reveal" style="margin-top:2.5rem; font-size:0.85rem; color:rgba(245,240,232,0.35); letter-spacing:0.05em; text-align:center;">More mentors joining for the 2026 cycle — stay tuned.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background: var(--cream); color: var(--ink); padding: 8rem 3rem;">
+  <div style="max-width: 800px; margin: 0 auto;">
+    <div class="about-label reveal" style="color:#2a6b3c;">Frequently Asked Questions</div>
+    <h2 style="font-family:var(--font-display); font-size:clamp(3rem,6vw,5.5rem); line-height:0.95; letter-spacing:0.03em; margin-bottom:3.5rem;" class="reveal reveal-delay-1">GOT<br>QUESTIONS?</h2>
+
+    <div class="faq-list">
+
+      <div class="faq-item reveal reveal-delay-1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Is YLAR really free?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Yes — completely and always. YLAR was built on the belief that quality college application support shouldn't be reserved for those who can pay for it. There is no cost, no upsell, and no strings attached.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-2">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Who is eligible to apply as a mentee?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">YLAR is designed for first-generation and/or low-income (FGLI) high school students who are preparing to apply to college. If you're a rising senior applying this cycle, you're welcome to apply.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-3">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>What makes YLAR different from other free programs?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Most programs offer editing. YLAR offers strategy. Our mentors are current college students who were FGLI applicants themselves — they understand the emotional, financial, and identity dynamics that shape your application.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>How does the mentor matching process work?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">After you apply, we review your application and match you with a mentor based on your goals, areas of need, and background. We aim to pair students with mentors who share similar experiences.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-2">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>How much time does the program require?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">It depends on where you are in the process. During peak season (August–January), mentees and mentors typically connect weekly or as needed around deadlines. The time commitment is flexible.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-3">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>Do I have to be applying to Ivy League schools?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Absolutely not. YLAR supports students applying to all types of schools — state universities, HBCUs, liberal arts colleges, community colleges, and yes, highly selective schools too.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>I'm a college student. How do I become a mentor?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">If you're a current college student who identifies as first-generation and/or low-income, we want to hear from you. Click the "Become a Mentor" button and fill out our short application.</div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-2">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          <span>When does the 2026 cycle begin?</span>
+          <span class="faq-icon">+</span>
+        </button>
+        <div class="faq-a">Applications for both mentors and mentees are open now. Mentor onboarding typically happens in the summer, with active mentorship beginning in August ahead of Early Decision deadlines.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-item { border-bottom: 1px solid rgba(10,10,10,0.1); }
+  .faq-q {
+    width: 100%; background: none; border: none; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.4rem 0; text-align: left; gap: 1rem;
+  }
+  .faq-q span:first-child { font-size: 1.05rem; font-weight: 500; color: var(--ink); line-height: 1.4; font-family: var(--font-body); }
+  .faq-icon { font-size: 1.5rem; font-weight: 300; color: #2a6b3c; flex-shrink: 0; transition: transform 0.3s; line-height: 1; }
+  .faq-item.open .faq-icon { transform: rotate(45deg); }
+  .faq-a { font-size: 0.95rem; line-height: 1.8; color: rgba(10,10,10,0.65); max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; padding-bottom: 0; }
+  .faq-item.open .faq-a { max-height: 300px; padding-bottom: 1.5rem; }
+</style>
+
+<section id="apply">
+  <span class="apply-eyebrow reveal">Applications Now Open — 2026 Cycle</span>
+  <h2 class="apply-headline reveal reveal-delay-1">YOUR STORY<br>IS <span class="gold">ENOUGH.</span></h2>
+  <p class="apply-sub reveal reveal-delay-2">Whether you're a high school student ready to tell your story, or a college student ready to help someone else tell theirs — YLAR has a place for you.</p>
+  <div class="apply-buttons reveal reveal-delay-3">
+    <a href="#" class="btn-primary">Apply as a Mentee</a>
+    <a href="#" class="btn-secondary">Become a Mentor</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">YLAR</div>
+  <div class="footer-tagline" style="border-bottom: 2px solid #2a6b3c; padding-bottom: 2px;">Every student has a story worth telling.</div>
+  <div class="footer-copy">© 2026 Young Leaders Application Review · Free Forever</div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+<script>
+  function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(el => el.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+</script>
+
+</body>
+</html>
